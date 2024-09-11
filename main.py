@@ -10,6 +10,7 @@ from bot.utils.launcher import process
 async def handle(request):
     return web.Response(text="Bot is running")
 
+
 async def start_server():
     app = web.Application()
     app.add_routes([web.get('/', handle)])
@@ -22,11 +23,11 @@ async def start_server():
 
 
 async def main():
-    # Запуск веб-сервера для удовлетворения требований Render
-    await start_server()
-
-    # Основной код твоего бота
-    await process()
+    # Запускаем веб-сервер и основного бота параллельно
+    await asyncio.gather(
+        start_server(),  # Запуск веб-сервера для Render
+        process()  # Основной код твоего бота
+    )
 
 
 if __name__ == '__main__':
