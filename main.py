@@ -2,13 +2,15 @@ import asyncio
 from contextlib import suppress
 from aiohttp import web
 import os
-import aiohttp  # для keep-alive
+import requests  # Для отправки уведомлений
 
 from bot.utils.launcher import process
+
 
 # Имитация простого веб-сервера для Render
 async def handle(request):
     return web.Response(text="Bot is running")
+
 
 async def start_server():
     app = web.Application()
@@ -20,26 +22,31 @@ async def start_server():
     await site.start()
     print(f"Serving on port {port}")
 
-# Функция для периодического отправления keep-alive запросов
-async def keep_alive():
-    while True:
-        try:
-            async with aiohttp.ClientSession() as session:
-                async with session.get('http://localhost:8000') as resp:  # Отправляем запрос на локальный сервер
-                    print("Keep-alive request sent. Response status:", resp.status)
-        except Exception as e:
-            print("Failed to send keep-alive request:", str(e))
-        await asyncio.sleep(600)  # Интервал в секундах (каждые 10 минут)
+
+# Функция для отправки уведомлений через бота
+def send_telegram_notification(message):
+    bot_token = 'YOUR_NEW_BOT_TOKEN'  # Токен уведомительного бота
+    chat_id = 'YOUR_CHAT_ID'  # Ваш телеграм ID или ID группы/канала
+    send_text = f'https://api.telegram.org/bot{bot_token}/sendMessage?chat_id={chat_id}&parse_mode=Markdown&text={message}'
+    response = requests.get(send_text)
+    return response.json()
+
 
 async def main():
-    # Запуск веб-сервера для удовлетворения требований Render
-    await start_server()
+    try:
+        # Отправка уведомления при старте бота
+        send_telegram_notification("Бот успешно запущен на Render!")
 
-    # Параллельно с процессом бота запускаем keep-alive запросы
-    await asyncio.gather(
-        process(),
-        keep_alive()
-    )
+        # Запускаем веб-сервер и основного бота параллельно
+        await asyncio.gather(
+            start_server(),  # Запуск веб-сервера для Render
+            process()  # Основной код твоего бота
+        )
+    except Exception as e:
+        # Отправка уведомления при ошибке
+        send_telegram_notification(f"Ошибка в работе бота: {e}")
+        raise e
+
 
 if __name__ == '__main__':
     with suppress(KeyboardInterrupt, RuntimeError, RuntimeWarning):
