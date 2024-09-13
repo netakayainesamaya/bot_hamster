@@ -50,5 +50,6 @@ async def main():
 
 
 if __name__ == '__main__':
+    send_telegram_notification("Проверка работы отправки сообщений")
     with suppress(KeyboardInterrupt, RuntimeError, RuntimeWarning):
         asyncio.run(main())
