@@ -35,8 +35,9 @@ def send_telegram_notification(message):
 
 async def main():
     try:
-        # Отправка уведомления при старте бота
+        print("Attempting to send notification...")  # Добавь это сообщение для отладки
         send_telegram_notification("Бот успешно запущен на Render!")
+        print("Notification sent!")
 
         # Запускаем веб-сервер и основного бота параллельно
         await asyncio.gather(
@@ -50,6 +51,5 @@ async def main():
 
 
 if __name__ == '__main__':
-    send_telegram_notification("Проверка работы отправки сообщений")
     with suppress(KeyboardInterrupt, RuntimeError, RuntimeWarning):
         asyncio.run(main())
