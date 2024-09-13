@@ -45,7 +45,7 @@ def send_telegram_notification(message):
 async def periodic_activity():
     while True:
         send_telegram_notification("Бот активен и работает.")
-        await asyncio.sleep(2000)  # Отправляем сообщение каждый час
+        await asyncio.sleep(300)  # Отправляем сообщение каждый час
 
 
 async def main():
