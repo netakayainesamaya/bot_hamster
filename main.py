@@ -41,16 +41,24 @@ def send_telegram_notification(message):
     return response.json()
 
 
+# Периодическая отправка сообщений, чтобы поддерживать активность
+async def periodic_activity():
+    while True:
+        send_telegram_notification("Бот активен и работает.")
+        await asyncio.sleep(2000)  # Отправляем сообщение каждый час
+
+
 async def main():
     try:
-        print("Attempting to send notification...")  # Добавь это сообщение для отладки
+        print("Attempting to send notification...")  # Отладочное сообщение
         send_telegram_notification("Бот успешно запущен на Render!")
         print("Notification sent!")
 
-        # Запускаем веб-сервер и основного бота параллельно
+        # Запускаем веб-сервер, основной код бота и периодическую отправку уведомлений
         await asyncio.gather(
             start_server(),  # Запуск веб-сервера для Render
-            process()  # Основной код твоего бота
+            process(),  # Основной код твоего бота
+            periodic_activity()  # Периодическая отправка уведомлений
         )
     except Exception as e:
         # Отправка уведомления при ошибке
