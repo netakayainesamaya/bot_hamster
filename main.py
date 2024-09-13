@@ -29,6 +29,7 @@ def send_telegram_notification(message):
     chat_id = 'YOUR_CHAT_ID'  # Ваш телеграм ID или ID группы/канала
     send_text = f'https://api.telegram.org/bot{bot_token}/sendMessage?chat_id={chat_id}&parse_mode=Markdown&text={message}'
     response = requests.get(send_text)
+    print(response.status_code, response.json())
     return response.json()
 
 
