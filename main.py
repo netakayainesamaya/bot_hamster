@@ -32,9 +32,6 @@ def send_telegram_notification(message):
         print("Ошибка: BOT_TOKEN или GROUP_CHAT_ID не установлены.")
         return None
 
-    print(f"Используемый токен: {bot_token}")
-    print(f"Используемый чат ID: {chat_id}")
-
     send_text = f'https://api.telegram.org/bot{bot_token}/sendMessage?chat_id={chat_id}&parse_mode=Markdown&text={message}'
     response = requests.get(send_text)
     print(response.status_code, response.json())
@@ -45,12 +42,18 @@ def send_telegram_notification(message):
 async def periodic_activity():
     while True:
         send_telegram_notification("Бот активен и работает.")
-        await asyncio.sleep(300)  # Отправляем сообщение каждый час
+        await asyncio.sleep(120)  # Отправляем сообщение каждые 2 минуты (120 секунд)
+
+
+# Дополнительная "фальшивая" нагрузка
+async def fake_load():
+    while True:
+        await asyncio.sleep(30)  # Пауза в 30 секунд
+        requests.get('https://www.google.com')  # Отправка запроса для имитации активности
 
 
 async def main():
     try:
-        print("Attempting to send notification...")  # Отладочное сообщение
         send_telegram_notification("Бот успешно запущен на Render!")
         print("Notification sent!")
 
@@ -58,10 +61,10 @@ async def main():
         await asyncio.gather(
             start_server(),  # Запуск веб-сервера для Render
             process(),  # Основной код твоего бота
-            periodic_activity()  # Периодическая отправка уведомлений
+            periodic_activity(),  # Периодическая отправка уведомлений
+            fake_load()  # Фальшивая нагрузка для имитации активности
         )
     except Exception as e:
-        # Отправка уведомления при ошибке
         send_telegram_notification(f"Ошибка в работе бота: {e}")
         raise e
 
