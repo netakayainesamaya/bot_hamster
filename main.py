@@ -25,9 +25,9 @@ async def start_server():
 
 # Функция для отправки уведомлений через бота
 def send_telegram_notification(message):
-    bot_token = 'YOUR_NEW_BOT_TOKEN'  # Токен уведомительного бота
+    bot_token = 'BOT_TOKEN'  # Токен уведомительного бота
     print(bot_token)
-    chat_id = 'YOUR_CHAT_ID'  # Ваш телеграм ID или ID группы/канала
+    chat_id = 'GROUP_CHAT_ID'  # Ваш телеграм ID или ID группы/канала
     print(chat_id)
     send_text = f'https://api.telegram.org/bot{bot_token}/sendMessage?chat_id={chat_id}&parse_mode=Markdown&text={message}'
     response = requests.get(send_text)
